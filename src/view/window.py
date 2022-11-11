@@ -21,6 +21,7 @@ from .barcode_dialog import BarcodeDialog
 from .pass_list import PassList
 from .pass_widget import PassWidget
 from .pkpass_back_view import PassBackView
+from .import_pass import import_action
 
 
 @Gtk.Template(resource_path='/me/sanchezrodriguez/passes/window.ui')
@@ -35,6 +36,7 @@ class PassesWindow(Adw.ApplicationWindow):
     pass_list = Gtk.Template.Child()
     pass_widget = Gtk.Template.Child()
     pass_additional_info  = Gtk.Template.Child()
+    import_button = Gtk.Template.Child()
 
     pass_list_stack = Gtk.Template.Child()
 
@@ -42,6 +44,8 @@ class PassesWindow(Adw.ApplicationWindow):
 
     def __init__(self, pass_list_model, **kwargs):
         super().__init__(**kwargs)
+
+        self.test = "test"
 
         # Whether or not the leaflet is allowed to navigate
         self.main_leaflet_can_navigate = False
@@ -64,6 +68,7 @@ class PassesWindow(Adw.ApplicationWindow):
         self.back_button.connect('clicked', self._on_back_clicked)
         self.barcode_button.connect('clicked', self._on_barcode_clicked)
         self.pass_list.connect('row-activated', self._on_row_activated)
+        self.import_button.connect('clicked', self._on_import_action)
 
         # Select the first pass in the list
         self.pass_list.select_pass_at_index(0)
@@ -86,6 +91,9 @@ class PassesWindow(Adw.ApplicationWindow):
 
         except Exception as error:
             self.show_toast(str(error))
+
+    def _on_import_action(self, _):
+        import_action(self)
 
     def _on_row_activated(self, pass_list, pass_row):
         a_pass = pass_row.data()

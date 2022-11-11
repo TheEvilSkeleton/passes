@@ -58,6 +58,7 @@ passes_sources = [
   'view/auxiliary/colored_box.py',
   'view/barcode_dialog.py',
   'view/barcode_widget.py',
+  'view/import_pass.py',
   'view/pass_list/pass_list.py',
   'view/pass_list/pass_row_header.py',
   'view/pass_list/pass_row.py',

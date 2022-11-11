@@ -28,6 +28,7 @@ from .digital_pass_factory import FileIsNotAPass, FormatNotSupportedYet, PassFac
 from .digital_pass_list_store import DigitalPassListStore
 from .persistence import FileAlreadyImported, PersistenceManager
 from .window import PassesWindow
+from .import_pass import import_action
 
 
 class Application(Adw.Application):
@@ -35,7 +36,6 @@ class Application(Adw.Application):
         super().__init__(application_id='me.sanchezrodriguez.passes',
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
-        self.__file_chooser = None
         self.__pass_list = DigitalPassListStore()
         self.__persistence = PersistenceManager()
 
@@ -100,18 +100,8 @@ class Application(Adw.Application):
         index_to_select = min(self.__pass_list.length() - 1, selected_pass_index)
         self.window().select_pass_at_index(index_to_select)
 
-    def on_import_action(self, widget, __):
-        if not self.__file_chooser:
-            self.__file_chooser = Gtk.FileChooserNative.new(
-                _('Import a pass'),
-                self.window(),
-                Gtk.FileChooserAction.OPEN,
-                None,
-                None)
-
-            self.__file_chooser.connect('response', self._on_file_chosen)
-
-        self.__file_chooser.show()
+    def on_import_action(self, *args):
+        import_action(self.window())
 
     def on_preferences_action(self, widget, _):
         print('app.preferences action activated')
@@ -128,31 +118,6 @@ class Application(Adw.Application):
         if shortcuts:
             self.set_accels_for_action(f'app.{name}',
                                        shortcuts)
-
-    def _on_file_chosen(self, filechooser, response):
-        if response != Gtk.ResponseType.ACCEPT:
-            return
-
-        try:
-            pass_file = filechooser.get_file()
-            digital_pass = PassFactory.create(pass_file)
-
-            stored_file = self.__persistence\
-                .save_pass_file(pass_file, digital_pass.format())
-
-            digital_pass.set_path(stored_file.get_path())
-            self.__pass_list.insert(digital_pass)
-
-            if not self.__pass_list.is_empty():
-                self.window().show_pass_list()
-                self.window().force_fold(False)
-
-            found, index = self.__pass_list.find(digital_pass)
-            if found:
-                self.window().select_pass_at_index(index)
-
-        except Exception as exception:
-            self.window().show_toast(str(exception))
 
     def window(self):
         return self.props.active_window

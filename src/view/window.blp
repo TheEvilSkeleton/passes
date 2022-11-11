@@ -56,9 +56,24 @@ template PassesWindow : Adw.ApplicationWindow
                                 name: "empty-list-page";
                                 child: Adw.StatusPage
                                 {
-                                    icon-name: "me.sanchezrodriguez.passes";
-                                    title: _("You have no passes");
-                                    description: _("Use the “+” button to import a pass");
+                                    icon-name: "me.sanchezrodriguez.passes-symbolic";
+                                    title: _("Passes");
+                                    hexpand: true;
+                                    vexpand: true;
+
+                                    Gtk.Button import_button
+                                    {
+                                        valign: center;
+                                        halign: center;
+                                        label: _("_Import a Pass…");
+                                        use-underline: true;
+
+                                        styles
+                                        [
+                                          "suggested-action",
+                                          "pill",
+                                        ]
+                                    }
                                 };
                             }
 
